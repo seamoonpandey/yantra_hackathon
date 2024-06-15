@@ -1,81 +1,90 @@
-const express = require('express');
-const Utensil = require('../models/utensil');
+import express from "express";
+import asyncHandler from "express-async-handler";
+import Utensil from "../models/utensil";
 
-const router = express.Router();
+// @desc    Create a new utensil
+// @route   POST /api/utensils
+// @access  Public
+const createUtensil = asyncHandler(async (req, res) => {
+  const { name, image, subImages, description, uses, material } = req.body;
 
-// Create a new utensil
-router.post('/', async (req, res) => {
-  try {
-    const utensil = new Utensil(req.body);
-    await utensil.save();
-    res.status(201).send(utensil);
-  } catch (error) {
-    res.status(400).send(error);
+  const utensil = new Utensil({
+    name,
+    image,
+    subImages,
+    description,
+    uses,
+    material,
+  });
+
+  const createdUtensil = await utensil.save();
+  res.status(201).json(createdUtensil);
+});
+
+// @desc    Get all utensils
+// @route   GET /api/utensils
+// @access  Public
+const getUtensils = asyncHandler(async (req, res) => {
+  const utensils = await Utensil.find();
+  res.status(200).json(utensils);
+});
+
+// @desc    Get a specific utensil by ID
+// @route   GET /api/utensils/:id
+// @access  Public
+const getUtensilById = asyncHandler(async (req, res) => {
+  const utensil = await Utensil.findById(req.params.id);
+
+  if (utensil) {
+    res.status(200).json(utensil);
+  } else {
+    res.status(404);
+    throw new Error("Utensil not found");
   }
 });
 
-// Get all utensils
-router.get('/', async (req, res) => {
-  try {
-    const utensils = await Utensil.find();
-    res.status(200).send(utensils);
-  } catch (error) {
-    res.status(500).send(error);
+// @desc    Update a specific utensil by ID
+// @route   PUT /api/utensils/:id
+// @access  Public
+const updateUtensil = asyncHandler(async (req, res) => {
+  const { name, image, subImages, description, uses, material } = req.body;
+  const utensil = await Utensil.findById(req.params.id);
+
+  if (utensil) {
+    utensil.name = name || utensil.name;
+    utensil.image = image || utensil.image;
+    utensil.subImages = subImages || utensil.subImages;
+    utensil.description = description || utensil.description;
+    utensil.uses = uses || utensil.uses;
+    utensil.material = material || utensil.material;
+
+    const updatedUtensil = await utensil.save();
+    res.status(200).json(updatedUtensil);
+  } else {
+    res.status(404);
+    throw new Error("Utensil not found");
   }
 });
 
-// Get a specific utensil by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const utensil = await Utensil.findById(req.params.id);
-    if (!utensil) {
-      return res.status(404).send();
-    }
-    res.status(200).send(utensil);
-  } catch (error) {
-    res.status(500).send(error);
+// @desc    Delete a specific utensil by ID
+// @route   DELETE /api/utensils/:id
+// @access  Public
+const deleteUtensil = asyncHandler(async (req, res) => {
+  const utensil = await Utensil.findById(req.params.id);
+
+  if (utensil) {
+    await utensil.remove();
+    res.status(200).json({ message: "Utensil removed" });
+  } else {
+    res.status(404);
+    throw new Error("Utensil not found");
   }
 });
 
-// Update a specific utensil by ID
-router.patch('/:id', async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'image', 'subImages', 'description', 'uses', 'material'];
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-
-  if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid updates!' });
-  }
-
-  try {
-    const utensil = await Utensil.findById(req.params.id);
-
-    if (!utensil) {
-      return res.status(404).send();
-    }
-
-    updates.forEach((update) => utensil[update] = req.body[update]);
-    await utensil.save();
-    res.status(200).send(utensil);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-// Delete a specific utensil by ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const utensil = await Utensil.findByIdAndDelete(req.params.id);
-
-    if (!utensil) {
-      return res.status(404).send();
-    }
-
-    res.status(200).send(utensil);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-module.exports = router;
-
+export {
+  createUtensil,
+  getUtensils,
+  getUtensilById,
+  updateUtensil,
+  deleteUtensil,
+};
