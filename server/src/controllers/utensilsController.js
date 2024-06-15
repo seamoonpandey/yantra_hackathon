@@ -1,6 +1,5 @@
-import express from "express";
 import asyncHandler from "express-async-handler";
-import Utensil from "../models/utensil";
+import Utensil from "../models/utensil.js";
 
 // @desc    Create a new utensil
 // @route   POST /api/utensils
