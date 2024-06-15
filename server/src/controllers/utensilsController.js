@@ -72,7 +72,7 @@ const deleteUtensil = asyncHandler(async (req, res) => {
   const utensil = await Utensil.findById(req.params.id);
 
   if (utensil) {
-    await utensil.remove();
+    await utensil.deleteOne();
     res.status(200).json({ message: "Utensil removed" });
   } else {
     res.status(404);
