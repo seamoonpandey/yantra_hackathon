@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import Utensil from "../models/utensil.js";
 
 // @desc    Create a new utensil
-// @route   POST /api/utensils
+// @route   POST /utensils
 // @access  Public
 const createUtensil = asyncHandler(async (req, res) => {
   const { name, image, subImages, description, uses, material } = req.body;
@@ -21,15 +21,31 @@ const createUtensil = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all utensils
-// @route   GET /api/utensils
+// @route   GET /utensils
+// @access  Public
+// @desc    Get all utensils with pagination
+// @route   GET /utensils
 // @access  Public
 const getUtensils = asyncHandler(async (req, res) => {
-  const utensils = await Utensil.find();
-  res.status(200).json(utensils);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 3;
+  const offset = (page - 1) * limit;
+
+  const total = await Utensil.countDocuments();
+  const utensils = await Utensil.find().skip(offset).limit(limit);
+  const totalPages = Math.ceil(total / limit);
+
+  res.status(200).json({
+    page,
+    limit,
+    total,
+    totalPages,
+    utensils,
+  });
 });
 
 // @desc    Get a specific utensil by ID
-// @route   GET /api/utensils/:id
+// @route   GET /utensils/:id
 // @access  Public
 const getUtensilById = asyncHandler(async (req, res) => {
   const utensil = await Utensil.findById(req.params.id);
@@ -43,7 +59,7 @@ const getUtensilById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update a specific utensil by ID
-// @route   PUT /api/utensils/:id
+// @route   PUT /utensils/:id
 // @access  Public
 const updateUtensil = asyncHandler(async (req, res) => {
   const { name, image, subImages, description, uses, material } = req.body;
@@ -66,7 +82,7 @@ const updateUtensil = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete a specific utensil by ID
-// @route   DELETE /api/utensils/:id
+// @route   DELETE /utensils/:id
 // @access  Public
 const deleteUtensil = asyncHandler(async (req, res) => {
   const utensil = await Utensil.findById(req.params.id);
