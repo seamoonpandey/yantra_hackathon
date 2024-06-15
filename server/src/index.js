@@ -6,6 +6,7 @@ import multer from "multer";
 import connectDB from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import utensilRoutes from "./routes/utensilRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/utensils", utensilRoutes);
+app.use("/search", searchRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
