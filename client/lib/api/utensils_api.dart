@@ -1,49 +1,43 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:utechseel/api/constants.dart';
 import 'package:utechseel/models/utensil.dart';
+import 'package:http/http.dart' as http;
 
 final base = ApiConstant().baseUrl;
 
 class UtensilsController {
-  Future<List<Utensil>> fetchAll({int page = 1}) async {
-    final url = Uri.parse('$base/utensils?page=$page');
+  final headers = {
+    'Content-Type': 'application/json',
+  };
 
+  Future<List<Utensil>> fetchAll({final int page = 1}) async {
     try {
-      final response = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      });
+      final queryParams = {
+        'page': '$page',
+      };
+      final uri =
+          Uri.parse('$base/utensils').replace(queryParameters: queryParams);
+
+      final response = await http.get(uri, headers: headers);
 
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        return jsonResponse.map((item) => Utensil.fromJson(item)).toList();
+        final data = jsonDecode(response.body);
+        print(response.body);
+        final List<Utensil> allUtensils = [];
+
+        for (final Map<String, dynamic> utensilData
+            in (data as List).cast<Map<String, dynamic>>()) {
+          allUtensils.add(Utensil.fromJson(utensilData));
+        }
+        return allUtensils;
       } else {
-        throw Exception('Failed to load utensils');
+        print(
+            'Error: Server responded with status code ${response.statusCode}');
+        return [];
       }
-    } catch (e) {
-      print('Error fetching utensils: $e');
-      throw Exception('Error fetching utensils: $e');
-    }
-  }
-
-  Future<Utensil> fetchById(int id) async {
-    final url = Uri.parse('$base/utensils/$id');
-
-    try {
-      final response = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      });
-
-      if (response.statusCode == 200) {
-        return Utensil.fromJson(json.decode(response.body));
-      } else {
-        throw Exception('Failed to load utensil');
-      }
-    } catch (e) {
-      print('Error fetching utensil: $e');
-      throw Exception('Error fetching utensil: $e');
+    } catch (error) {
+      print('Error: $error');
+      return [];
     }
   }
 }
