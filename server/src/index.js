@@ -12,6 +12,7 @@ dotenv.config();
 const app = express();
 const upload = multer();
 const port = process.env.PORT || 5000;
+const host = process.env.HOST || "localhost";
 
 connectDB();
 
@@ -31,6 +32,6 @@ app.use("/utensils", utensilRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(port, host, () => {
+  console.log(`Server running at http://${host}:${port}`);
 });
