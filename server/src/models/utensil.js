@@ -5,6 +5,7 @@ const utensilSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     image: {
       type: String,
