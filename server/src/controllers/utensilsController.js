@@ -23,9 +23,6 @@ const createUtensil = asyncHandler(async (req, res) => {
 // @desc    Get all utensils
 // @route   GET /utensils
 // @access  Public
-// @desc    Get all utensils with pagination
-// @route   GET /utensils
-// @access  Public
 const getUtensils = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 3;
@@ -35,11 +32,17 @@ const getUtensils = asyncHandler(async (req, res) => {
   const utensils = await Utensil.find().skip(offset).limit(limit);
   const totalPages = Math.ceil(total / limit);
 
+  let nextPage = null;
+  if (page < totalPages) {
+    nextPage = page + 1;
+  }
+
   res.status(200).json({
     page,
     limit,
     total,
     totalPages,
+    nextPage,
     utensils,
   });
 });
