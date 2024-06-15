@@ -3,19 +3,19 @@ import 'package:utechseel/api/utensils_api.dart';
 import 'package:utechseel/models/utensil.dart';
 import 'package:utechseel/widgets/slick.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomeScreen> {
   final UtensilsController _controller = UtensilsController();
   final List<Utensil> _utensils = [];
   int _page = 1;
   bool _isLoading = false;
-  bool _hasMore = true;
+  bool _hasMore = false;
 
   @override
   void initState() {
@@ -47,39 +47,29 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text('Utensils Showcase'),
-          backgroundColor: Colors.green,
-          titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          )),
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              !_isLoading &&
-              _hasMore) {
-            _fetchUtensils();
-          }
-          return false;
-        },
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: _utensils.length + (_hasMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == _utensils.length) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Slick(utensil: _utensils[index]),
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+            !_isLoading &&
+            _hasMore) {
+          _fetchUtensils();
+        }
+        return false;
+      },
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _utensils.length + (_hasMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _utensils.length) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ),
+          }
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Slick(utensil: _utensils[index]),
+          );
+        },
       ),
     );
   }

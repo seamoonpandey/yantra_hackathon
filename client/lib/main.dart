@@ -1,37 +1,72 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:utechseel/screen/home_screen.dart';
+import 'package:utechseel/screen/kamera_screen.dart';
 
-List<CameraDescription>? camera;
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    camera = await availableCameras();
-  } on CameraException catch (e) {
-    print("Error: $e.code\nError Message: $e.message");
-  }
-  runApp(const UtechSils());
+void main() {
+  runApp(const MyApp());
 }
 
-class UtechSils extends StatelessWidget {
-  const UtechSils({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(final BuildContext context) {
+  Widget build(BuildContext context) {
     return MaterialApp(
-      title: "UtechSils",
+      title: 'Yantra Hackathon',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text("UtechSils"),
-        ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 1;
+  static final List<Widget> _widgetOptions = <Widget>[
+    const Text("kamera"),
+    const HomeScreen(),
+    Container(), // Placeholder for settings
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      debugShowCheckedModeBanner: false,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
     );
   }
 }

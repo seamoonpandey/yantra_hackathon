@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class KameraPage extends StatefulWidget {
-  final List<CameraDescription> cameras;
+  final List<CameraDescription>? cameras;
   const KameraPage(
     this.cameras, {
     super.key,
@@ -13,9 +13,13 @@ class KameraPage extends StatefulWidget {
 }
 
 class _KameraPageState extends State<KameraPage> {
-  late List<dynamic> _recognitions;
+  // late List<dynamic> _recognitions;
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return const Scaffold(
+      body: Center(
+        child: Text("Kamera"),
+      ),
+    );
   }
 }
