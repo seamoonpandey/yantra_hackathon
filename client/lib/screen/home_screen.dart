@@ -15,7 +15,7 @@ class _HomePageState extends State<HomeScreen> {
   final List<Utensil> _utensils = [];
   int _page = 1;
   bool _isLoading = false;
-  bool _hasMore = false;
+  bool _hasMore = true; // Changed from false to true
 
   @override
   void initState() {
@@ -57,13 +57,12 @@ class _HomePageState extends State<HomeScreen> {
         return false;
       },
       child: ListView.builder(
+        shrinkWrap: true,
         padding: const EdgeInsets.all(16),
         itemCount: _utensils.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _utensils.length) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),

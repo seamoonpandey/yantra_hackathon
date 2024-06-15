@@ -2,9 +2,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class KameraPage extends StatefulWidget {
-  final List<CameraDescription>? cameras;
+  // final List<CameraDescription>? cameras;
   const KameraPage(
-    this.cameras, {
+      // this.cameras,
+      {
     super.key,
   });
 
